@@ -1,0 +1,24 @@
+﻿@page "/models/view/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Viewe Model</h3>
+<hr />
+<br />
+
+<FormComponent model="@model" disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Model model = new Model();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        model = await _client.GetFromJsonAsync<Model>($"{Endpoints.ModelsEndpoint}/{id}");
+    }
+}

@@ -16,9 +16,9 @@ namespace CarRentalManagement.Shared.Models
         public string LicencePlateNumber { get; set; }
         public double RentalRate { get; set; }
 
-        public virtual Manufacturer Manufacturer { get; set; }
-        public virtual Model Model { get; set; }
-        public virtual Colour Colour { get; set; }
-        public virtual List<Booking> Bookings { get; set; }
+        public virtual Manufacturer? Manufacturer { get; set; }
+        public virtual Model? Model { get; set; }
+        public virtual Colour? Colour { get; set; }
+        public virtual List<Booking>? Bookings { get; set; }
     }
 }

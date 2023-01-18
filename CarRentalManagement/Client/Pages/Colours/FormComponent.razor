@@ -1,0 +1,34 @@
+﻿@using CarRentalManagement.Shared.Models;
+@using Microsoft.AspNetCore.Components.Forms
+
+<EditForm Model="@colour" OnValidSubmit="@onValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <fieldset disabled="@disabled">
+        <div class="form-group">
+            <label>Name</label>
+            <div>
+                <InputText @bind-Value="@colour.Name" />
+                <ValidationMessage For="@(() => colour.Name)" />
+            </div>
+        </div>
+    </fieldset>
+
+    @if (!disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @buttonText
+        </button>
+    }
+
+</EditForm>
+
+<BackToList target="colours" />
+
+@code {
+    [Parameter] public Colour colour { get; set; }
+    [Parameter] public string buttonText { get; set; } = "Save";
+    [Parameter] public EventCallback onValidSubmit { get; set; }
+    [Parameter] public Boolean disabled { get; set; }
+}

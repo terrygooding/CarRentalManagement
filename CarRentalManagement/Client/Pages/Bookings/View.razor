@@ -1,0 +1,22 @@
+﻿@page "/bookings/view/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<Heading text="View Colour" />
+
+<FormComponent booking="@booking" disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Booking booking = new Booking();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        booking = await _client.GetFromJsonAsync<Booking>($"{Endpoints.BookingsEndpoint}/{id}");
+    }
+}

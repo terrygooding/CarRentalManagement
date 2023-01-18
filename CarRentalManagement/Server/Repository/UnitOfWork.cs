@@ -1,8 +1,11 @@
 ﻿using CarRentalManagement.Server.Contracts;
 using CarRentalManagement.Server.Data;
+using CarRentalManagement.Server.Models;
 using CarRentalManagement.Shared.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CarRentalManagement.Server.Repository
 {
@@ -16,9 +19,12 @@ namespace CarRentalManagement.Server.Repository
         private IGenericRepository<Booking> _bookings;
         private IGenericRepository<Customer> _customers;
 
-        public UnitOfWork(ApplicationDbContext context)
+        private UserManager<ApplicationUser> _userManager;
+
+        public UnitOfWork(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public IGenericRepository<Manufacturer> Manufacturers 
@@ -47,7 +53,9 @@ namespace CarRentalManagement.Server.Repository
 
         public async Task SaveAsync(HttpContext httpContext)
         {
-            var user = httpContext.User.Identity.Name;
+            //var user = httpContext.User.Identity.Name;
+            var userId = httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var user = await _userManager.FindByIdAsync(userId);
 
             var entries = _context.ChangeTracker.Entries()
                 .Where(q => q.State == EntityState.Modified ||
@@ -56,11 +64,11 @@ namespace CarRentalManagement.Server.Repository
             foreach (var entry in entries)
             {
                 ((BaseModel)entry.Entity).DateUpdated = DateTime.Now;
-                ((BaseModel)entry.Entity).UpdatedBy = user;
+                ((BaseModel)entry.Entity).UpdatedBy = user.UserName;
                 if (entry.State == EntityState.Added)
                 {
                     ((BaseModel)entry.Entity).DateCreated = DateTime.Now;
-                    ((BaseModel)entry.Entity).CreatedBy = user;
+                    ((BaseModel)entry.Entity).CreatedBy = user.UserName;
                 }
             }
 

@@ -1,0 +1,30 @@
+﻿@page "/manufacturers/edit/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Manufacturer</h3>
+<hr />
+<br />
+
+<FormComponent buttonText="Update Manufacturer" onValidSubmit="@EditManufacturer" manufacturer="@manufacturer" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Manufacturer manufacturer = new Manufacturer();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        manufacturer = await _client.GetFromJsonAsync<Manufacturer>($"{Endpoints.ManufacturersEndpoint}/{id}");
+    }
+
+    private async Task EditManufacturer()
+    {
+        await _client.PutAsJsonAsync($"{Endpoints.ManufacturersEndpoint}/{id}", manufacturer);
+        _navManager.NavigateTo("/manufacturers/");
+    }
+}

@@ -1,0 +1,70 @@
+﻿@page "/manufacturers"
+@inject HttpClient _client
+@inject IJSRuntime js
+@attribute [Authorize]
+
+<h3 class="card-title">Car Manufacturer</h3>
+<hr />
+<br />
+
+<a href="/manufacturers/create" class="btn btn-secondary">
+    <span class="oi oi-plus"></span>
+    Create New Manufacturer
+</a>
+
+@if(manufacturers == null)
+{
+    <div class="alert alert-info">Loading Manufacturers...</div>
+}
+else
+{
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var manufacturer in manufacturers)
+            {
+                <tr>
+                    <td>@manufacturer.Id</td>
+                    <td>@manufacturer.Name</td>
+                    <td>
+                        <a href="/manufacturers/view/@manufacturer.Id" class="btn btn-primary">
+                            <span class="oi oi-book"></span>
+                        </a>
+                        <a href="/manufacturers/edit/@manufacturer.Id" class="btn btn-warning">
+                            <span class="oi oi-pencil"></span>
+                        </a>
+                        <button class="btn btn-danger" @onclick="@(()=>DeleteAsync(manufacturer.Id))">
+                            <span class="oi oi-delete"></span>    
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Manufacturer> manufacturers;
+
+    protected async override Task OnInitializedAsync()
+    {
+        manufacturers = await _client.GetFromJsonAsync<List<Manufacturer>>($"{Endpoints.ManufacturersEndpoint}");
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        var manufacturer = manufacturers.First(q => q.Id == id);
+
+        if(await js.InvokeAsync<bool>("confirm", $"Do you want to delete {manufacturer.Name}?"))
+        {
+            await _client.DeleteAsync($"{Endpoints.ManufacturersEndpoint}/{id}");
+            await OnInitializedAsync();
+        }
+    }
+}

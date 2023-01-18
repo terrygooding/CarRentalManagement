@@ -1,0 +1,31 @@
+﻿@page "/vehicles/edit/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Vehicle</h3>
+<hr />
+<br />
+
+<FormComponent buttonText="Update Vehicle" onValidSubmit="@EditVehicle" vehicle="@vehicle" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Vehicle vehicle = new Vehicle();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        vehicle = await _client.GetFromJsonAsync<Vehicle>($"{Endpoints.VehiclesEndpoint}/{id}");
+    }
+
+    private async Task EditVehicle()
+    {
+        await _client.PutAsJsonAsync($"{Endpoints.VehiclesEndpoint}/{id}", vehicle);
+        _navManager.NavigateTo("/vehicles/");
+    }
+}
+

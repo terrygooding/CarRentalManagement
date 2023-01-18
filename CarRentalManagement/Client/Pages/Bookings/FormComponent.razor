@@ -1,0 +1,87 @@
+﻿@using CarRentalManagement.Shared.Models;
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject HttpClient _client
+
+<EditForm Model="@booking" OnValidSubmit="@onValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <fieldset disabled="@disabled">
+
+        <div class="form-group">
+            <label>Customer</label>
+            <div>
+                <InputSelect @bind-Value="booking.CustomerId" class="form-control">
+                    <option value="">Select Customer</option>
+                    @if (customers != null)
+                    {
+                        foreach (var customer in customers)
+                        {
+                            <option value="@customer.Id">@customer.FirstName @customer.LastName | @customer.EmailAddress</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => booking.Customer)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Vehicle</label>
+            <div>
+                <InputSelect @bind-Value="booking.VehicleId" class="form-control">
+                    <option value="">Select Vehicle</option>
+                    @if (vehicles != null)
+                    {
+                        foreach (var vehicle in vehicles)
+                        {
+                            <option value="@vehicle.Id">@vehicle.Manufacturer.Name @vehicle.Model.Name | @vehicle.LicencePlateNumber</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => booking.Vehicle)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Date Out</label>
+            <div>
+                <InputDate @bind-Value="@booking.DateOut" />
+                <ValidationMessage For="@(() => booking.DateOut)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Date In</label>
+            <div>
+                <InputDate @bind-Value="@booking.DateIn" />
+                <ValidationMessage For="@(() => booking.DateIn)" />
+            </div>
+        </div>
+    </fieldset>
+
+    @if (disabled){
+        <button type="submit" class="btn btn-success btn-block">
+            @buttonText
+        </button>
+    }
+
+</EditForm>
+
+<BackToList target="bookings" />
+
+@code {
+    [Parameter] public Booking booking { get; set; }
+    [Parameter] public string buttonText { get; set; } = "Save";
+    [Parameter] public EventCallback onValidSubmit { get; set; }
+    [Parameter] public Boolean disabled { get; set; }
+
+    private List<Customer> customers;
+    private List<Vehicle> vehicles;
+
+    protected async override Task OnInitializedAsync()
+    {
+        customers = await _client.GetFromJsonAsync<List<Customer>>($"{Endpoints.CustomersEndpoint}");
+        vehicles = await _client.GetFromJsonAsync<List<Vehicle>>($"{Endpoints.VehiclesEndpoint}");
+    }
+}

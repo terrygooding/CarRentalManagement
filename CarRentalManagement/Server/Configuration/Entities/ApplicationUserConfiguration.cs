@@ -21,7 +21,7 @@ namespace CarRentalManagement.Server.Configuration.Entities
                     LastName = "Admin",
                     UserName = "admin@localhost.com",
                     NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                    PasswordHash = hasher.HashPassword(null, "P@sswrd1")
+                    PasswordHash = hasher.HashPassword(null, "Password01!")
                 },
                 new ApplicationUser
                 {
@@ -32,7 +32,7 @@ namespace CarRentalManagement.Server.Configuration.Entities
                     LastName = "User",
                     UserName = "user@localhost.com",
                     NormalizedUserName = "USER@LOCALHOST.COM",
-                    PasswordHash = hasher.HashPassword(null, "P@sswrd1")
+                    PasswordHash = hasher.HashPassword(null, "Password01!")
                 }
             );
         }

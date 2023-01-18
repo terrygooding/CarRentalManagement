@@ -1,0 +1,122 @@
+﻿@using CarRentalManagement.Shared.Models;
+@using Microsoft.AspNetCore.Components.Forms
+
+@inject HttpClient _client
+
+<EditForm Model="@vehicle" OnValidSubmit="@onValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <fieldset disabled="@disabled">
+        <div class="form-group">
+            <label>Manufacturer</label>
+            <div>
+                <InputSelect @bind-Value="vehicle.ManufacturerId" class="form-control">
+                    <option value="">Select Manufacturer</option>
+                    @if (manufacturers != null)
+                    {
+                        foreach (var manufacturer in manufacturers)
+                        {
+                            <option value="@manufacturer.Id">@manufacturer.Name</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => vehicle.Manufacturer)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Model</label>
+            <div>
+                <InputSelect @bind-Value="vehicle.ModelId" class="form-control">
+                    <option value="">Select Model</option>
+                    @if (models != null)
+                    {
+                        foreach (var model in models)
+                        {
+                            <option value="@model.Id">@model.Name</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => vehicle.Model)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Colour</label>
+            <div>
+                <InputSelect @bind-Value="vehicle.ColourId" class="form-control">
+                    <option value="">Select Colour</option>
+                    @if (colours != null)
+                    {
+                        foreach (var colour in colours)
+                        {
+                            <option value="@colour.Id">@colour.Name</option>
+                        }
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => vehicle.Colour)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Year</label>
+            <div>
+                <InputNumber @bind-Value="@vehicle.Year" />
+                <ValidationMessage For="@(() => vehicle.Year)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Licence Plate</label>
+            <div>
+                <InputText @bind-Value="@vehicle.LicencePlateNumber" />
+                <ValidationMessage For="@(() => vehicle.LicencePlateNumber)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>VIN</label>
+            <div>
+                <InputText @bind-Value="@vehicle.Vin" />
+                <ValidationMessage For="@(() => vehicle.Vin)" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Daily Rate</label>
+            <div>
+                <InputNumber @bind-Value="@vehicle.RentalRate" />
+                <ValidationMessage For="@(() => vehicle.RentalRate)" />
+            </div>
+        </div>
+    </fieldset>
+
+    @if (!disabled)
+    {
+        <button type="submit" class="btn btn-success btn-block">
+            @buttonText
+        </button>
+    }
+
+</EditForm>
+
+<BackToList target="vehicles" />
+
+@code {
+    [Parameter] public Vehicle vehicle { get; set; }
+    [Parameter] public string buttonText { get; set; } = "Save";
+    [Parameter] public EventCallback onValidSubmit { get; set; }
+    [Parameter] public Boolean disabled { get; set; }
+
+    private List<Manufacturer> manufacturers;
+    private List<Model> models;
+    private List<Colour> colours;
+
+    protected async override Task OnInitializedAsync()
+    {
+        manufacturers = await _client.GetFromJsonAsync<List<Manufacturer>>($"{Endpoints.ManufacturersEndpoint}");
+        models = await _client.GetFromJsonAsync<List<Model>>($"{Endpoints.ModelsEndpoint}");
+        colours = await _client.GetFromJsonAsync<List<Colour>>($"{Endpoints.ColoursEndpoint}");
+    }
+}

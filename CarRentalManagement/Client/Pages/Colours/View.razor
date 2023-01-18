@@ -1,0 +1,24 @@
+﻿@page "/colours/view/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>View Colour</h3>
+<hr />
+<br />
+
+<FormComponent colour="@colour" disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Colour colour = new Colour();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        colour = await _client.GetFromJsonAsync<Colour>($"{Endpoints.ColoursEndpoint}/{id}");
+    }
+}

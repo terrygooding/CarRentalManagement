@@ -1,0 +1,20 @@
+﻿@page "/manufacturers/create/"
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Create New Manufacturer</h3>
+<hr />
+<br />
+
+<FormComponent buttonText="Create Manufacturer" onValidSubmit="@CreateManufacturer" manufacturer="@manufacturer" />
+
+@code {
+    Manufacturer manufacturer = new Manufacturer();
+
+    private async Task CreateManufacturer()
+    {
+        await _client.PostAsJsonAsync(Endpoints.ManufacturersEndpoint, manufacturer);
+        _navManager.NavigateTo("/manufacturers/");
+    }
+}

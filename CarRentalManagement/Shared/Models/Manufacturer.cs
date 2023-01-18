@@ -11,6 +11,6 @@ namespace CarRentalManagement.Shared.Models
     {
         public string Name { get; set; }
 
-        public virtual List<Vehicle> Vehicle { get; set; }
+        public virtual List<Vehicle>? Vehicle { get; set; }
     }
 }

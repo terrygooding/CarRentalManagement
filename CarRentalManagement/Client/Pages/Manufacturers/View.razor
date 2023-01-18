@@ -1,0 +1,24 @@
+﻿@page "/manufacturers/view/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Manufacturer</h3>
+<hr />
+<br />
+
+<FormComponent manufacturer="@manufacturer" disabled="true" />
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Manufacturer manufacturer = new Manufacturer();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        manufacturer = await _client.GetFromJsonAsync<Manufacturer>($"{Endpoints.ManufacturersEndpoint}/{id}");
+    }
+}

@@ -6,7 +6,7 @@ using CarRentalManagement.Server.Contracts;
 
 namespace CarRentalManagement.Server.Controllers
 {
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class BookingsController : ControllerBase
     {
@@ -21,15 +21,17 @@ namespace CarRentalManagement.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBookings()
         {
-            var booking = await _unitOfWork.Bookings.GetAllAsync();
-            return Ok(booking);
+            var includes = new List<string> { "Vehicle", "Customer" };
+            var bookings = await _unitOfWork.Bookings.GetAllAsync(includes : includes);
+            return Ok(bookings);
         }
 
         // GET: /Bookings/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetBooking(int id)
         {
-            var booking = await _unitOfWork.Bookings.GetAsync(q => q.Id == id);
+            var includes = new List<string> { "Vehicle", "Customer" };
+            var booking = await _unitOfWork.Bookings.GetAsync(q => q.Id == id, includes);
 
             if (booking == null)
             {
@@ -99,8 +101,8 @@ namespace CarRentalManagement.Server.Controllers
 
         private async Task<bool> BookingExists(int id)
         {
-            var booking = await _unitOfWork.Bookings.GetAsync(q => q.Id == id);
-            return booking != null;
+            var Booking = await _unitOfWork.Bookings.GetAsync(q => q.Id == id);
+            return Booking != null;
         }
     }
 }

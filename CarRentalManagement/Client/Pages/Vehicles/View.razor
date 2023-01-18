@@ -1,0 +1,25 @@
+﻿@page "/vehicles/view/{id:int}"
+@using CarRentalManagement.Client.Static;
+@using CarRentalManagement.Shared.Models;
+@using System.Net.Http.Json;
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Edit Vehicle</h3>
+<hr />
+<br />
+
+<FormComponent vehicle="@vehicle" disabled="true"/>
+
+@code {
+    [Parameter] public int id { get; set; }
+
+    Vehicle vehicle = new Vehicle();
+
+    protected async override Task OnParametersSetAsync()
+    {
+        vehicle = await _client.GetFromJsonAsync<Vehicle>($"{Endpoints.VehiclesEndpoint}/{id}");
+    }
+}
+

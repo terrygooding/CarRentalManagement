@@ -1,0 +1,30 @@
+﻿@page "/vehicles/create/"
+
+@inject HttpClient _client
+@inject NavigationManager _navManager
+
+<h3>Create New Vehicle</h3>
+<hr />
+<br />
+
+<FormComponent buttonText="Create Vehicle" onValidSubmit="@CreateVehicle" vehicle="@vehicle" />
+
+@code {
+    Vehicle vehicle = new Vehicle();
+    private List<Manufacturer> manufacturers;
+    private List<Model> models;
+    private List<Colour> colours;
+
+    protected async override Task OnInitializedAsync()
+    {
+        //manufacturers = await _client.GetFromJsonAsync<List<Manufacturer>>($"{Endpoints.ManufacturersEndpoint}");  
+        //models = await _client.GetFromJsonAsync<List<Model>>($"{Endpoints.ModelsEndpoint}");
+        //colours = await _client.GetFromJsonAsync<List<Colour>>($"{Endpoints.ColoursEndpoint}");
+    }
+
+    private async Task CreateVehicle()
+    {
+        await _client.PostAsJsonAsync(Endpoints.VehiclesEndpoint, vehicle);
+        _navManager.NavigateTo("/vehicles/");
+    }
+}
